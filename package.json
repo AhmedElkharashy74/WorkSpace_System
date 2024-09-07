@@ -1,0 +1,33 @@
+{
+  "name": "meowspace",
+  "version": "1.0.0",
+  "description": "a meowspace for meows",
+  "main": "index.js",
+  "scripts": {
+    "test": "meow",
+    "start": "electron index"
+  },
+  "keywords": [
+    "meow"
+  ],
+  "author": "meowElkharashy",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "child_process": "^1.0.2",
+    "cors": "^2.8.5",
+    "cron": "^3.1.7",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "electron": "^31.2.1",
+    "electron-is-dev": "^3.0.1",
+    "exceljs": "^4.4.0",
+    "express": "^4.19.2",
+    "morgan": "^1.10.0",
+    "node-cron": "^3.0.3",
+    "node-schedule": "^2.1.1",
+    "sequelize": "^6.37.3",
+    "sequelize-cli": "^6.6.2",
+    "sqlite3": "^5.1.7"
+  }
+}

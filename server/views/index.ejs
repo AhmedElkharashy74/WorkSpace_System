@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>App</title>
+    <link rel="stylesheet" href="css/vendor/Chart.min.css" />
+    <link rel="stylesheet" href="css/tailwind.css" />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/flowbite@1.4.0/dist/flowbite.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.0/flowbite.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="tailwind.config.js"></script>
+    <style>
+      main{
+    /* This hides the scrollbar track */
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: #888 #eee; /* Firefox */
+}
+
+
+    </style>
+    <script src="js/vendor/alpine.js" defer></script>
+  </head>
+  <body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+    <div
+      class="flex h-screen overflow-y-hidden bg-white"
+      x-data="setup()"
+      x-init="$refs.loading.classList.add('hidden')"
+    >
+      <!-- Loading screen -->
+      <div
+        x-ref="loading"
+        class="fixed inset-0 z-[200] flex items-center justify-center text-white bg-black bg-opacity-50"
+        style="backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)"
+      >
+        Loading.....
+      </div>
+      <!-- Sidebar backdrop -->
+      <div
+        x-show.in.out.opacity="isSidebarOpen"
+        class="fixed inset-0 z-10 bg-black bg-opacity-20 lg:hidden"
+        style="backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)"
+      ></div>
+      <!-- Sidebar -->
+      <aside
+        x-transition:enter="transition transform duration-300"
+        x-transition:enter-start="-translate-x-full opacity-30  ease-in"
+        x-transition:enter-end="translate-x-0 opacity-100 ease-out"
+        x-transition:leave="transition transform duration-300"
+        x-transition:leave-start="translate-x-0 opacity-100 ease-out"
+        x-transition:leave-end="-translate-x-full opacity-0 ease-in"
+        class="
+          fixed
+          inset-y-0
+          z-10
+          flex flex-col flex-shrink-0
+          w-64
+          max-h-screen
+          overflow-hidden
+          transition-all
+          transform
+          bg-white
+          border-r
+          shadow-lg
+          lg:z-auto lg:static lg:shadow-none
+        "
+        :class="{'-translate-x-full lg:translate-x-0 lg:w-20': !isSidebarOpen}"
+      >
+        <!-- sidebar header -->
+        <div class="flex items-center justify-between flex-shrink-0 p-2" :class="{'lg:justify-center': !isSidebarOpen}">
+          <span class="p-2 text-xl font-semibold leading-8 tracking-wider uppercase whitespace-nowrap">
+            K<span :class="{'lg:hidden': !isSidebarOpen}">-WD</span>
+          </span>
+          <button @click="toggleSidbarMenu()" class="p-2 rounded-md lg:hidden">
+            <svg
+              class="w-6 h-6 text-gray-600"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <!-- Sidebar links -->
+        <nav class="flex-1 overflow-hidden hover:overflow-y-auto">
+          <ul class="p-2 overflow-hidden">
+            <li>
+              <a
+                href="/"
+                class="flex items-center p-2 space-x-2 rounded-md hover:bg-gray-100"
+                :class="{'justify-center': !isSidebarOpen}"
+              >
+                <span>
+                  <svg
+                    class="w-6 h-6 text-gray-400"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                    />
+                  </svg>
+                </span>
+                <span :class="{ 'lg:hidden': !isSidebarOpen }">Dashboard</span>
+              </a>
+            </li>
+          
+            <li>
+              <a
+                href="/users"
+                class="flex items-center p-2 space-x-2 rounded-md hover:bg-gray-100"
+                :class="{'justify-center': !isSidebarOpen}"
+              >
+                <span>
+                  <svg
+                    class="w-6 h-6 text-gray-400"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M8 12m-3 0a3 3 0 116 0 3 3 0 01-6 0zm8 0a3 3 0 016 0 3 3 0 01-6 0zM7 16h10a4 4 0 014 4v1H3v-1a4 4 0 014-4z"
+                    />
+                  </svg>
+                </span>
+                <span :class="{ 'lg:hidden': !isSidebarOpen }">Guests</span>
+              </a>
+            </li>
+          
+            
+          
+            <li>
+              <a
+                href="/bookings"
+                class="flex items-center p-2 space-x-2 rounded-md hover:bg-gray-100"
+                :class="{'justify-center': !isSidebarOpen}"
+              >
+                <span>
+                  <svg
+                    class="w-6 h-6 text-gray-400"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M5 11h14M12 5h.01M12 19h.01M12 11v4M5 19h14v-4H5v4z"
+                    />
+                  </svg>
+                </span>
+                <span :class="{ 'lg:hidden': !isSidebarOpen }">Bookings</span>
+              </a>
+            </li>
+
+            <li>
+              <a
+                href="/rooms"
+                class="flex items-center p-2 space-x-2 rounded-md hover:bg-gray-100"
+                :class="{'justify-center': !isSidebarOpen}"
+              >
+                <span>
+                  <svg
+                    class="w-6 h-6 text-gray-400"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M4 6h16M4 12h16m-7 6h7"
+                    />
+                  </svg>
+                </span>
+                <span :class="{ 'lg:hidden': !isSidebarOpen }">Rooms</span>
+              </a>
+            </li>
+            
+          
+
+            <% topRooms.forEach(room => { %>
+              <li>
+                <a
+                  href="/rooms/<%= room.roomId %>"
+                  class="flex items-center p-2 space-x-2 rounded-md hover:bg-gray-100"
+                  :class="{'justify-center': !isSidebarOpen}"
+                >
+                  <span>
+                    
+                  </span>
+                  <span :class="{ 'lg:hidden': !isSidebarOpen }"><%= room.roomName%></span>
+                </a>
+              </li>
+            <% }) %>
+            <!-- Sidebar Links... -->
+          </ul>
+          
+        </nav>
+        <!-- Sidebar footer -->
+        <div class="flex-shrink-0 p-2 border-t max-h-14">
+          <button
+            class="
+              flex
+              items-center
+              justify-center
+              w-full
+              px-4
+              py-2
+              space-x-1
+              font-medium
+              tracking-wider
+              uppercase
+              bg-gray-100
+              border
+              rounded-md
+              focus:outline-none focus:ring
+            "
+          >
+            <span>
+              <svg
+                class="w-6 h-6"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                />
+              </svg>
+            </span>
+            <span :class="{'lg:hidden': !isSidebarOpen}"> Logout </span>
+          </button>
+        </div>
+      </aside>
+
+      <div class="flex flex-col flex-1 h-full overflow-hidden">
+        <header class="flex-shrink-0 border-b">
+          <div class="flex items-center justify-between p-2">
+            <!-- Navbar left -->
+            <div class="flex items-center space-x-3">
+              <span class="p-2 text-xl font-semibold tracking-wider uppercase lg:hidden">K-WD</span>
+              <!-- Toggle sidebar button -->
+              <button @click="toggleSidbarMenu()" class="p-2 rounded-md focus:outline-none focus:ring">
+                <svg
+                  class="w-4 h-4 text-gray-600"
+                  :class="{'transform transition-transform -rotate-180': isSidebarOpen}"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+
+            <!-- Mobile search box -->
+            <div
+              x-show.transition="isSearchBoxOpen"
+              class="fixed inset-0 z-10 bg-black bg-opacity-20"
+              style="backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)"
+            >
+              <div
+                @click.away="isSearchBoxOpen = false"
+                class="absolute inset-x-0 flex items-center justify-between p-2 bg-white shadow-md"
+              >
+                <div class="flex items-center flex-1 px-2 space-x-2">
+                  <!-- search icon -->
+                  <span
+                    ><svg
+                      class="w-6 h-6 text-gray-500"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                      />
+                    </svg>
+                  </span>
+                  <input
+                    type="text"
+                    placeholder="Search"
+                    class="w-full px-4 py-3 text-gray-600 rounded-md focus:bg-gray-100 focus:outline-none"
+                  />
+                </div>
+                <!-- close button -->
+                <button @click="isSearchBoxOpen = false" class="flex-shrink-0 p-4 rounded-md">
+                  <svg
+                    class="w-4 h-4 text-gray-500"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Desktop search box -->
+            
+
+            <!-- Navbar right -->
+            <div class="relative flex items-center space-x-3" style="display: none;">
+              <!-- Search button -->
+              <button
+                @click="isSearchBoxOpen = true"
+                class="p-2 bg-gray-100 rounded-full md:hidden focus:outline-none focus:ring hover:bg-gray-200"
+              >
+                <svg
+                  class="w-6 h-6 text-gray-500"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </button>
+
+              <div class="items-center hidden space-x-3 md:flex">
+                <!-- Notification Menu -->
+                <div class="relative" x-data="{ isOpen: false }">
+                  <!-- red dot -->
+                  <div class="absolute right-0 p-1 bg-red-400 rounded-full animate-ping"></div>
+                  <div class="absolute right-0 p-1 bg-red-400 border rounded-full"></div>
+                  <button
+                    @click="isOpen = !isOpen"
+                    class="p-2 bg-gray-100 rounded-full hover:bg-gray-200 focus:outline-none focus:ring"
+                  >
+                    <svg
+                      class="w-6 h-6 text-gray-500"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                      />
+                    </svg>
+                  </button>
+
+                  <div
+                    @click.away="isOpen = false"
+                    x-show.transition.opacity="isOpen"
+                    class="
+                      absolute
+                      z-50
+                      w-48
+                      max-w-md
+                      mt-3
+                      transform
+                      bg-white
+                      rounded-md
+                      shadow-lg
+                      -translate-x-3/4
+                      min-w-max
+                    "
+                  >
+                    <div class="p-4 font-medium border-b">
+                      <!-- <span class="text-gray-800">Notification</span> -->
+                    </div>
+                    <ul class="flex flex-col p-2 my-2 space-y-1">
+                      <li>
+                        <a href="#" class="block px-2 py-1 transition rounded-md hover:bg-gray-100">Link</a>
+                      </li>
+                      <li>
+                        <a href="#" class="block px-2 py-1 transition rounded-md hover:bg-gray-100">Another Link</a>
+                      </li>
+                    </ul>
+                    <div class="flex items-center justify-center p-4 text-blue-700 underline border-t">
+                      <a href="#">See All</a>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Services Menu -->
+                <div class="relative" x-data="{ isOpen: false }">
+                  <button
+                    @click="isOpen = !isOpen"
+                    class="p-2 bg-gray-100 rounded-full hover:bg-gray-200 focus:outline-none focus:ring"
+                  >
+                    <svg
+                      class="w-6 h-6 text-gray-500"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+                      />
+                    </svg>
+                  </button>
+
+                  <div
+                    @click.away="isOpen = false"
+                    x-show.transition.opacity="isOpen"
+                    class="
+                      absolute
+                      z-50
+                      w-48
+                      max-w-md
+                      mt-3
+                      transform
+                      bg-white
+                      rounded-md
+                      shadow-lg
+                      -translate-x-3/4
+                      min-w-max
+                    "
+                  >
+                    <div class="p-4 text-lg font-medium border-b">Web apps & services</div>
+                    <ul class="flex flex-col p-2 my-3 space-y-3">
+                      <li>
+                        <a href="#" class="flex items-start px-2 py-1 space-x-2 rounded-md hover:bg-gray-100">
+                          <span class="block mt-1">
+                            <svg
+                              class="w-6 h-6 text-gray-500"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path fill="#fff" d="M12 14l9-5-9-5-9 5 9 5z" />
+                              <path
+                                fill="#fff"
+                                d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"
+                              />
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"
+                              />
+                            </svg>
+                          </span>
+                          <span class="flex flex-col">
+                            <span class="text-lg">Atlassian</span>
+                            <span class="text-sm text-gray-400">Lorem ipsum dolor sit.</span>
+                          </span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="#" class="flex items-start px-2 py-1 space-x-2 rounded-md hover:bg-gray-100">
+                          <span class="block mt-1">
+                            <svg
+                              class="w-6 h-6 text-gray-500"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"
+                              />
+                            </svg>
+                          </span>
+                          <span class="flex flex-col">
+                            <span class="text-lg">Slack</span>
+                            <span class="text-sm text-gray-400"
+                              >Lorem ipsum, dolor sit amet consectetur adipisicing elit.</span
+                            >
+                          </span>
+                        </a>
+                      </li>
+                    </ul>
+                    <div class="flex items-center justify-center p-4 text-blue-700 underline border-t">
+                      <a href="#">Show all apps</a>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Options Menu -->
+                <div class="relative" x-data="{ isOpen: false }">
+                  <button
+                    @click="isOpen = !isOpen"
+                    class="p-2 bg-gray-100 rounded-full hover:bg-gray-200 focus:outline-none focus:ring"
+                  >
+                    <svg
+                      class="w-6 h-6 text-gray-500"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
+                      />
+                    </svg>
+                  </button>
+
+                  <div
+                    @click.away="isOpen = false"
+                    x-show.transition.opacity="isOpen"
+                    class="
+                      absolute
+                      z-50
+                      w-48
+                      max-w-md
+                      mt-3
+                      transform
+                      bg-white
+                      rounded-md
+                      shadow-lg
+                      -translate-x-3/4
+                      min-w-max
+                    "
+                  >
+                    <div class="p-4 font-medium border-b">
+                      <span class="text-gray-800">Options</span>
+                    </div>
+                    <ul class="flex flex-col p-2 my-2 space-y-1">
+                      <li>
+                        <a href="#" class="block px-2 py-1 transition rounded-md hover:bg-gray-100">Link</a>
+                      </li>
+                      <li>
+                        <a href="#" class="block px-2 py-1 transition rounded-md hover:bg-gray-100">Another Link</a>
+                      </li>
+                    </ul>
+                    <div class="flex items-center justify-center p-4 text-blue-700 underline border-t">
+                      <a href="#">See All</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- User Menu -->
+              <div class="relative" x-data="{ isOpen: false }">
+                <button @click="isOpen = !isOpen" class="p-1 bg-gray-200 rounded-full focus:outline-none focus:ring">
+                  <img
+                    class="object-cover w-8 h-8 rounded-full"
+                    src="https://avatars0.githubusercontent.com/u/57622665?s=460&u=8f581f4c4acd4c18c33a87b3e6476112325e8b38&v=4"
+                    alt="Ahmed Kamel"
+                  />
+                </button>
+                <!-- green dot -->
+                <div class="absolute right-0 p-1 bg-green-400 rounded-full bottom-3 animate-ping"></div>
+                <div class="absolute right-0 p-1 bg-green-400 border border-white rounded-full bottom-3"></div>
+
+                <div
+                  @click.away="isOpen = false"
+                  x-show.transition.opacity="isOpen"
+                  class="
+                    absolute
+                    z-50
+                    w-48
+                    max-w-md
+                    mt-3
+                    transform
+                    bg-white
+                    rounded-md
+                    shadow-lg
+                    -translate-x-3/4
+                    min-w-max
+                  "
+                >
+                  <div class="flex flex-col p-4 space-y-1 font-medium border-b">
+                    <span class="text-gray-800">Ahmed Kamel</span>
+                    <span class="text-sm text-gray-400">ahmed.kamel@example.com</span>
+                  </div>
+                  <ul class="flex flex-col p-2 my-2 space-y-1">
+                    <li>
+                      <a href="#" class="block px-2 py-1 transition rounded-md hover:bg-gray-100">Link</a>
+                    </li>
+                    <li>
+                      <a href="#" class="block px-2 py-1 transition rounded-md hover:bg-gray-100">Another Link</a>
+                    </li>
+                  </ul>
+                  <div class="flex items-center justify-center p-4 text-blue-700 underline border-t">
+                    <a href="#">Logout</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Main content -->
+        <main class="flex-1 max-h-full p-5 overflow-hidden overflow-y-scroll">
+          <!-- Main content header -->
+          <div
+            class="
+              flex flex-col
+              items-start
+              justify-between
+              pb-6
+              space-y-4
+              border-b
+              lg:items-center lg:space-y-0 lg:flex-row
+            "
+          >
+            <h1 class="text-2xl font-semibold whitespace-nowrap">Dashboard</h1>
+            
+          </div>
+
+          <!-- Start Content -->
+
+          <!-- Chart cards (Four columns grid) -->
+          <div class="grid grid-cols-1 gap-6 mt-6 md:grid-cols-2 lg:grid-cols-3">
+            <!-- Users chart card --><a
+              href="#users"
+              class="p-3 transition-shadow border rounded-lg shadow-sm hover:shadow-lg"
+            >
+              <div class="flex items-start">
+                <div class="flex flex-col flex-shrink-0 space-y-2">
+                  <span class="text-gray-400">Total Guests</span>
+                  <span class="text-lg font-semibold"><%= active.length%></span>
+                </div>
+                <div class="relative min-w-0 ml-auto h-14">
+                  <!-- <canvas id="usersChart"></canvas> -->
+                </div>
+              </div>
+              <div>
+                <span class="inline-block px-2 text-sm text-white bg-green-300 rounded"><%= Math.round(active.length*100/freeSpace) %> %</span>
+                <span>of <%= totalSpace %></span>
+              </div>
+            </a>
+            <!-- Sessions chart card --><a
+              href="#freerooms"
+              class="p-3 transition-shadow border rounded-lg shadow-sm hover:shadow-lg"
+            >
+              <div class="flex items-start">
+                <div class="flex flex-col flex-shrink-0 space-y-2">
+                  <span class="text-gray-400">Totally Free Rooms</span>
+                  <span class="text-lg font-semibold"><%= freeRoomsNum %></span>
+                </div>
+                <div class="relative min-w-0 ml-auto h-14">
+                  <!-- <canvas id="sessionsChart"></canvas> -->
+                </div>
+              </div>
+              <div>
+                <span class="inline-block px-2 text-sm text-white bg-green-300 rounded"><%= Math.round(freeRoomsNum*100/roomsNum) %> %</span>
+                <span>Of Totally <%= roomsNum %></span>
+              </div>
+            </a>
+
+            <!-- Vists chart card --><a
+              href="#"
+              class="p-3 transition-shadow border rounded-lg shadow-sm hover:shadow-lg"
+            >
+              <div class="flex items-start">
+                <div class="flex flex-col flex-shrink-0 space-y-2">
+                  <span class="text-gray-400">Day Gains</span>
+                  <br>
+                  <span class="text-lg font-semibold"><%= Math.round( earnings ) %> EGP</span>
+                </div>
+                <div class="relative min-w-0 ml-auto h-14">
+                  <!-- <canvas id="vistsChart"></canvas> -->
+                </div>
+              </div>
+              <div>
+                <!-- <span class="inline-block px-2 text-sm text-white bg-green-300 rounded">10%</span> -->
+                <!-- <span>from 2020</span> -->
+              </div>
+            </a>
+
+           
+          </div>
+
+          <!-- Two columns grid -->
+          <div class="grid grid-cols-1 gap-6 mt-6 lg:grid-cols-2 xl:grid-cols-4">
+            <!-- Import data card -->
+            <div class="border rounded-lg shadow-sm ">
+              <!-- Card header -->
+              <div class="flex items-center justify-between px-4 py-2 border-b">
+                <h5 class="font-semibold">Export Data</h5>
+                <!-- Dots button -->
+                <button class="p-2 rounded-full">
+                  <svg
+                    class="w-6 h-6 text-gray-600"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
+                    />
+                  </svg>
+                </button>
+              </div>
+              <p class="px-4 py-6 text-gray-600">You can Export All users or Bookings from here .</p>
+              <ul class="px-4 pb-4 space-y-4 divide-y">
+                <h5 class="font-semibold">Export as XLSX:</h5>
+                <li class="flex items-start justify-between pt-4">
+                  <div class="flex items-start space-x-3">
+                    <!-- Twitter icon -->
+                   
+                    <div>
+                      <h5 class="font-semibold">Export</h5>
+                      <span class="text-sm font-medium text-gray-400">Bookings</span>
+                    </div>
+                  </div>
+                  <a href="/export/" class="flex items-center px-2 py-1 space-x-2 text-sm text-white bg-blue-600 rounded-md">
+                    <span>Export</span>
+                    <span class="">
+                      <svg
+                        class="w-4 h-4"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                        />
+                      </svg>
+                    </span>
+                  </a>
+                </li>
+                <li class="flex items-start justify-between pt-4">
+                  <div class="flex items-start space-x-3">
+                    <!-- Github icon -->
+                    
+                    <div>
+                      <h5 class="font-semibold">Export</h5>
+                      <span class="text-sm font-medium text-gray-400">Users</span>
+                    </div>
+                  </div>
+                  <a href="#" class="flex items-center px-2 py-1 space-x-2 text-sm text-white bg-blue-600 rounded-md">
+                    <span>Export</span>
+                    <span class="">
+                      <svg
+                        class="w-4 h-4"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                        />
+                      </svg>
+                    </span>
+                  </a>
+                </li>
+                <li class="pt-4 text-sm font-medium text-gray-400">
+                  <p>
+                    All files Exported
+                    
+                    Will be saved <a href="/Exports" class="font-normal text-blue-500 hover:underline whitespace-nowrap"
+                    >Here</a
+                  >
+                  </p>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Monthly chart card -->
+            <div class="border rounded-lg shadow-sm xl:col-span-3">
+              <!-- Card header -->
+              <div class="flex items-center justify-between px-4 py-2 border-b">
+                <h5 id="freerooms" class="font-semibold">Free Room</h5>
+                <!-- Dots button -->
+                <button class="p-2 rounded-full">
+                  <svg
+                    class="w-6 h-6 text-gray-600"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
+                    />
+                  </svg>
+                </button>
+              </div>
+              <!-- Card content -->
+              <div class="flex items-center p-4 space-x-4" style="display: none;">
+                <!-- <span class="text-3xl font-medium">45%</span> -->
+                
+                  <!-- <span>39.2%</span> -->
+                </span>
+              </div>
+              <!-- Chart -->
+              <div class="relative min-w-0 p-4 h-80" style="margin: 0px;padding: 0px;">
+                <!-- <canvas id="updatingMonthlyChart"></canvas> -->
+                <div class="bg-white dark:bg-gray-800 relative sm:rounded-lg overflow-hidden">
+                  <div class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4" style="display: none;">
+                      <div class="w-full md:w-1/2">
+                          
+                      </div>
+                      <!-- Other elements like buttons can go here -->
+                  </div>
+                  <div class="overflow-x-auto">
+                    <table id="roomTable" class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                      <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                          <th scope="col" class="px-4 py-3">Room ID</th>
+                          <th scope="col" class="px-4 py-3">Room Name</th>
+                          <th scope="col" class="px-4 py-3">Guest Count</th>
+                          <th scope="col" class="px-4 py-3">Free Places</th>  
+                          <th scope="col" class="px-4 py-3">
+                            <span class="sr-only">Actions</span>
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        
+                        <% least.forEach(function(room) { %>
+                          <tr class="border-b dark:border-gray-700">
+                            <td class="px-4 py-3"><%= room.roomId %></td>
+                            <td class="px-4 py-3"><a href="<%= room.roomId %>"><%= room.roomName %></a></td>
+                            <td class="px-4 py-3"><%= room.guestCount %></td>
+                            <td class="px-4 py-3"><%= room.freePlaces %></td>
+                            <td class="px-4 py-3 flex items-center justify-end">
+                              <button data-modal-target="guestModal" data-modal-toggle="guestModal" type="button" class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Add Guest</button>
+                              <div id="guestModal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                                <div class="relative p-4 w-full max-w-md max-h-full">
+                                    <!-- Modal content -->
+                                    <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                                        <!-- Modal header -->
+                                        <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                                                Add a Guest to <%= room.roomName %>
+                                            </h3>
+                                            <button type="button" data-modal-toggle="guestModal"class="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="guestModal">
+                                                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                                                </svg>
+                                                <span class="sr-only">Close modal</span>
+                                            </button>
+                                        </div>
+                                        <!-- Modal body -->
+                                        <div class="p-4 md:p-5">
+                                            <form class="space-y-4" id="guestForm" method="post" action="/api/bookings/">
+                                              <input type="hidden" name="roomId" value="<%= room.roomId %>" id="">
+                                              <label for="guestSearchInput" class="block text-sm font-medium text-gray-700">Search for a guest</label>
+                                              <input type="text" id="guestSearchInput" class="mt-1 p-2 w-full border rounded">
+                                              <ul id="suggestionsList" class=" bg-white border rounded shadow-lg absolute w-full hidden"></ul>
+                                                
+                                                   
+                                                <button type="submit" id="searchButton" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Add a Guest</button>
+                                              
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+                            
+                              
+                            </td>
+                          </tr>
+                          
+                        <% }) %>
+                      </tbody>
+                    </table>
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Table see (https://tailwindui.com/components/application-ui/lists/tables) -->
+          <h3 class="mt-6 text-xl" id="users">Active Users</h3>
+          <div class="mx-auto max-w-screen-xl px-4 lg:px-12" style="padding: 0;">
+            <!-- Start coding here -->
+            <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
+                <div class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
+                    <div class="w-full md:w-1/2">
+                        <form class="flex items-center">
+                            <label for="searchInput" class="sr-only">Search</label>
+                            <div class="relative w-full">
+                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                    <svg aria-hidden="true" class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <input type="text" id="searchInput" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Search" required>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- Other elements like buttons can go here -->
+                </div>
+                <div class="overflow-x-auto">
+                  <table id="userTable" class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-4 py-3">ID</th>
+                            <th scope="col" class="px-4 py-3">Guest name</th>
+                            <th scope="col" class="px-4 py-3">Guest Email</th>
+                            <th scope="col" class="px-4 py-3">Guest Phone</th>
+                            <th scope="col" class="px-4 py-3">Room Name</th>
+                            <th scope="col" class="px-4 py-3">Checked-In At</th>
+                            <th scope="col" class="px-4 py-3">
+                                <span class="sr-only">Actions</span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% active.forEach(function(user) { %>
+                            <tr class="border-b dark:border-gray-700">
+                                <td class="px-4 py-3"><%= user.userId %></td>
+                                <td class="px-4 py-3"><%= user.userName %></td>
+                                <td class="px-4 py-3"><%= user.userEmail %></td>
+                                <td class="px-4 py-3"><%= user.userPhone %></td>
+                                <td class="px-4 py-3"><%= user.roomName %></td>
+                                <td class="px-4 py-3"><%= new Date(user.checkInTime).toLocaleTimeString() %></td>
+                                <td class="px-4 py-3 flex items-center justify-end">
+                                    <button onclick="checkout(<%= user.bookingId %>, this)" data-booking-id="<%= user.bookingId %>" class="checkOut focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">End Session</button>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+                
+                <!-- Modal -->
+                <div id="static-modal" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                    <div class="relative p-4 w-full max-w-2xl max-h-full">
+                        <!-- Modal content -->
+                        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700" style="position: relative;left: 50%;">
+                            <!-- Modal header -->
+                            <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                                <h3 id="modalTitle" class="text-xl font-semibold text-gray-900 dark:text-white">
+                                    Checkout Response
+                                </h3>
+                                <button data-modal-hide="static-modal" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
+                                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                                    </svg>
+                                    <span class="sr-only">Close modal</span>
+                                </button>
+                            </div>
+                            <!-- Modal body -->
+                            <div id="modalContent" class="p-4 md:p-5 space-y-4">
+                                <p>Guest Name: <span id="guestName"></span></p>
+                                <p>Check-In Time: <span id="checkInTime"></span></p>
+                                <p>Duration: <span id="duration"></span></p>
+                                <p>Cost: <span id="cost"></span></p>
+                            </div>
+                            <!-- Modal footer -->
+                            <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+                                <button id="close_modal" data-modal-hide="static-modal" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                </div>
+            </div>
+        </div>
+        
+        
+          <!-- This is an example component -->
+
+        </main>
+        <!-- Main footer -->
+     
+      </div>
+      <!-- Setting panel button -->
+      <div>
+        <!-- <button
+          @click="isSettingsPanelOpen = true"
+          class="
+            fixed
+            right-0
+            px-4
+            py-2
+            text-sm
+            font-medium
+            text-white
+            uppercase
+            transform
+            rotate-90
+            translate-x-8
+            bg-gray-600
+            top-1/2
+            rounded-b-md
+          "
+        >
+          Settings
+        </button> -->
+      </div>
+
+      <!-- Settings panel -->
+      <div
+        x-show="isSettingsPanelOpen"
+        @click.away="isSettingsPanelOpen = false"
+        x-transition:enter="transition transform duration-300"
+        x-transition:enter-start="translate-x-full opacity-30  ease-in"
+        x-transition:enter-end="translate-x-0 opacity-100 ease-out"
+        x-transition:leave="transition transform duration-300"
+        x-transition:leave-start="translate-x-0 opacity-100 ease-out"
+        x-transition:leave-end="translate-x-full opacity-0 ease-in"
+        class="fixed inset-y-0 right-0 flex flex-col bg-white shadow-lg bg-opacity-20 w-80"
+        style="backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px)"
+      >
+        <div class="flex items-center justify-between flex-shrink-0 p-2">
+          <h6 class="p-2 text-lg">Settings</h6>
+          <button @click="isSettingsPanelOpen = false" class="p-2 rounded-md focus:outline-none focus:ring">
+            <svg
+              class="w-6 h-6 text-gray-600"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div class="flex-1 max-h-full p-4 overflow-hidden hover:overflow-y-scroll">
+          <span>Settings Content</span>
+          <!-- Settings Panel Content ... -->
+        </div>
+      </div>
+    </div>
+    <script src="js/vendor/Chart.bundle.min.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+      const setup = () => {
+        return {
+          loading: true,
+          isSidebarOpen: false,
+          toggleSidbarMenu() {
+            this.isSidebarOpen = !this.isSidebarOpen
+          },
+          isSettingsPanelOpen: false,
+          isSearchBoxOpen: false,
+        }
+      }
+    </script>
+    <script src="cdn.datatables.net/2.1.0/js/dataTables.min.js"></script>
+    
+    
+  
+    <script>
+              document.addEventListener('DOMContentLoaded', function() {
+    console.log('mewo');
+
+    document.getElementById('searchInput').addEventListener('input', function() {
+        const searchValue = this.value.trim().toLowerCase();
+        const rows = Array.from(document.querySelectorAll('#userTable tbody tr'));
+
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            const matchScore = Array.from(cells).reduce((score, cell) => {
+                const cellText = cell.textContent.trim().toLowerCase();
+                const index = cellText.indexOf(searchValue);
+                return index !== -1 ? score + (cellText.length - index) : score;
+            }, 0);
+            row.dataset.matchScore = matchScore;
+        });
+
+        rows.sort((a, b) => b.dataset.matchScore - a.dataset.matchScore);
+
+        const tbody = document.querySelector('#userTable tbody');
+        rows.forEach(row => {
+            if (row.dataset.matchScore > 0) {
+                tbody.appendChild(row);
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+});
+
+    </script>
+  <script>
+  function sendHttpRequest(url, data) {
+    fetch(url, {
+      method: 'PUT', // or 'GET', 'PUT', etc.
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data), // Convert data object to JSON string
+    })
+    .then(response => response.json()) // Parse JSON response
+    .then(data => {
+      console.log('Success:', data);
+      // Handle success
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+      // Handle error
+    });
+  }
+      
+      
+      
+  </script>
+      <script src="https://unpkg.com/flowbite@1.4.0/dist/flowbite.js"></script>
+      <script>
+        document.getElementById('guestSearchInput').addEventListener('input', function() {
+          const query = this.value.trim();
+          if (query.length > 0) {
+            fetch(`/searchGuests?q=${encodeURIComponent(query)}`)
+              .then(response => response.json())
+              .then(data => {
+                const suggestionsList = document.getElementById('suggestionsList');
+                suggestionsList.innerHTML = '';
+                data.forEach(guest => {
+                  const listItem = document.createElement('li');
+                  listItem.textContent = guest.name;
+                  listItem.classList.add('p-2', 'cursor-pointer', 'hover:bg-gray-200');
+                  listItem.addEventListener('click', function() {
+                    document.getElementById('guestSearchInput').value = guest.name;
+                    suggestionsList.classList.add('hidden');
+      
+                    // Create the hidden input field
+                    const hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    hiddenInput.value = guest.id;
+                    hiddenInput.setAttribute('name', 'userId');
+      
+                    // Append the hidden input to the form
+                    const form = document.getElementById('guestForm');
+                    const existingHiddenInput = form.querySelector('input[name="userId"]');
+                    if (existingHiddenInput) {
+                      existingHiddenInput.value = guest.id;
+                    } else {
+                      form.appendChild(hiddenInput);
+                    }
+                  });
+                  suggestionsList.appendChild(listItem);
+                });
+                suggestionsList.classList.remove('hidden');
+              })
+              .catch(error => {
+                console.error('Error fetching suggestions:', error);
+              });
+          } else {
+            document.getElementById('suggestionsList').classList.add('hidden');
+          }
+        });
+      
+        // Optionally, hide the suggestions list when clicking outside of it
+        // document.addEventListener('click', function(event) {
+        //   const input = document.getElementById('guestSearchInput');
+        //   const suggestionsList = document.getElementById('suggestionsList');
+        //   if (!input.contains(event.target) && !suggestionsList.contains(event.target)) {
+        //     suggestionsList.classList.add('hidden');
+        //   }
+        // });
+      </script>
+      <script>
+      async function checkout(id, button) {
+    const bookingId = id;
+    try {
+        const response = await fetch(`/api/bookings/checkout/${bookingId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const data = await response.json();
+
+        if (data.error) {
+            showModal('Error', data.error);
+        } else {
+            // Populate the modal with the response data
+            document.getElementById('guestName').textContent = data.userName;
+            document.getElementById('checkInTime').textContent = new Date(data.checkInTime).toLocaleString();
+            document.getElementById('duration').textContent = data.duration.toFixed(2) + ' hours';
+            document.getElementById('cost').textContent = '$' + data.cost.toFixed(2);
+
+            // Show the modal
+            document.getElementById('static-modal').classList.remove('hidden');
+
+            // Track the current row to be hidden
+            currentRow = button.closest('tr');
+        }
+    } catch (error) {
+        console.error('Error during checkout:', error);
+        showModal('Error', 'An unexpected error occurred.');
+    }
+}
+
+function showModal(title, message) {
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalContent').innerHTML = `<p>${message}</p>`;
+    document.getElementById('static-modal').classList.remove('hidden');
+}
+
+// Hide the modal and the associated row when the close button is clicked
+document.querySelector('[data-modal-hide="static-modal"]').addEventListener('click', function() {
+    document.getElementById('static-modal').classList.add('hidden');
+    if (currentRow) {
+        currentRow.style.display = 'none';
+    }
+});
+document.getElementById('close_modal').addEventListener('click', function() {
+    document.getElementById('static-modal').classList.add('hidden');
+    if (currentRow) {
+        currentRow.style.display = 'none';
+    }
+});
+      </script>
+      
+  
+  </body>
+</html>
